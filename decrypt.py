@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 
 try:
+    start_time = time.time()
+
     # Get the directory of the current script
     script_directory = os.path.dirname(__file__)
 
@@ -79,6 +81,7 @@ try:
                             print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
 
                 print(f"Decryption failed. No valid password found in {password_file}")
+                print("Or now file with the ending of '.enc' found.")
 
             except FileNotFoundError:
                 print(f"Password file {password_file} not found.")
@@ -118,7 +121,8 @@ try:
                     else:
                         print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
 
-            print(f"Decryption failed. No valid password found in {password_file}")
+            print(f"\nDecryption failed. No valid password found in {password_file}")
+            print("Or now file with the ending of '.enc' found.")
 
         except FileNotFoundError:
             print(f"Password file {password_file} not found.")
@@ -141,5 +145,8 @@ try:
             print("Invalid arguments. Use --help for usage instructions.")
 
 except KeyboardInterrupt:
+
+    total_time = time.time() - start_time
     print("\nProgram interrupted.")
     print(f"Total password attempts before interruption: {password_count}")
+    print(f"Total time elapsed: {total_time:.2f} seconds")
