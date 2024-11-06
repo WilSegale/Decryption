@@ -72,7 +72,6 @@ try:
                             if os.path.exists(output_file):
                                 os.remove(output_file)
                     else:
-                        time.sleep(1)
                         print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
 
             print(f"Decryption failed. No valid password found in {password_file}")
