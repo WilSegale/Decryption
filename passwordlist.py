@@ -19,7 +19,7 @@ def main():
     start_time = time.time()
     
     # Open the file for writing passwords and ensure it closes properly
-    with open('rockyou.txt', 'w') as FilePassword:
+    with open('rockyou.txt', 'a') as FilePassword:
         try:
             while True:
                 password = generate_password(length)  # Pass `length` here
