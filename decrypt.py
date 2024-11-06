@@ -52,89 +52,93 @@ try:
         input_file = input("Enter the path to the encrypted file: ")
         output_file = "decrypted.txt"
         password_file = "rockyou.txt"
-
-        try:
-            with open(password_file, "r") as f:
-                for password in f:
-                    password = password.strip()
-                    password_count += 1  # Increment for each password attempt
-
-                    if decrypt_file(input_file, output_file, password):
-                        if validate_decryption(output_file):
-                            print(f"[ {GREEN}+{RESET} ] File decrypted successfully with password: {password}")
-                            print(f"Total attempts: {password_count}")
-                            with open("password.txt", "a") as pw_file:
-                                pw_file.write(f"Password to {input_file} is: {password}\n")
-                            os.system(f"open {output_file}")
-                            return
-                        else:
-                            print(f"[ {RED}={RESET} ] Incorrect password: {password}")
-                            if os.path.exists(output_file):
-                                os.remove(output_file)
-                    else:
-                        print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
-
-            print(f"Decryption failed. No valid password found in {password_file}")
-
-        except FileNotFoundError:
-            print(f"Password file {password_file} not found.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-    #auto mode
-    # Function for automatic decryption mode (for multiple files)
-    def main_auto():
-        global password_count
-        output_file = "decrypted.txt"
-        password_file = "rockyou.txt"
-
-        try:
-            with open(password_file, "r") as f:
-                passwords = f.readlines()
-
-            for input_file in files:
-                input_path = str(input_file)
-                print(f"Attempting to decrypt {input_path}...")
-
-                for password in passwords:
-                    password = password.strip()
-                    password_count += 1
-
-                    if decrypt_file(input_path, output_file, password):
-                        if validate_decryption(output_file):
-                            print(f"[ {GREEN}+{RESET} ] decrypted successfully with password: {password}")
-                            print(f"Total attempts: {password_count}")
-                            with open("password.txt", "a") as pw_file:
-                                pw_file.write(f"Password to {input_path} is: {password}\n")
-                            os.system(f"open {output_file}")
-                            return
-                        else:
-                            print(f"[ {RED}-{RESET} ] Incorrect password: {password}")
-                            if os.path.exists(output_file):
-                                os.remove(output_file)
-                    else:
-                        print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
-
-            print(f"Decryption failed. No valid password found in {password_file}")
-
-        except FileNotFoundError:
-            print(f"Password file {password_file} not found.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-
-    # Main entry point of the program
-    if __name__ == "__main__":
-        if len(sys.argv) == 2:
-            if sys.argv[1] == "--manual":
-                main_manual()
-            elif sys.argv[1] == "--auto":
-                main_auto()
-            elif sys.argv[1] == "--help":
-                print("Usage: python decrypt.py [--manual] [--auto] [--help]")
-                print("--manual: Decrypts the file with the given password.")
-                print("--auto: Decrypts all .enc files in the specified directory.")
-                print("--help: Displays this help message.")
+        if input_file == "":
+            print("No file specified. Exiting...")
+            sys.exit(1)
         else:
-            print("Invalid arguments. Use --help for usage instructions.")
+
+            try:
+                with open(password_file, "r") as f:
+                    for password in f:
+                        password = password.strip()
+                        password_count += 1  # Increment for each password attempt
+
+                        if decrypt_file(input_file, output_file, password):
+                            if validate_decryption(output_file):
+                                print(f"[ {GREEN}+{RESET} ] File decrypted successfully with password: {password}")
+                                print(f"Total attempts: {password_count}")
+                                with open("password.txt", "a") as pw_file:
+                                    pw_file.write(f"Password to {input_file} is: {password}\n")
+                                os.system(f"open {output_file}")
+                                return
+                            else:
+                                print(f"[ {RED}={RESET} ] Incorrect password: {password}")
+                                if os.path.exists(output_file):
+                                    os.remove(output_file)
+                        else:
+                            print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
+
+                print(f"Decryption failed. No valid password found in {password_file}")
+
+            except FileNotFoundError:
+                print(f"Password file {password_file} not found.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        #auto mode
+        # Function for automatic decryption mode (for multiple files)
+        def main_auto():
+            global password_count
+            output_file = "decrypted.txt"
+            password_file = "rockyou.txt"
+
+            try:
+                with open(password_file, "r") as f:
+                    passwords = f.readlines()
+
+                for input_file in files:
+                    input_path = str(input_file)
+                    print(f"Attempting to decrypt {input_path}...")
+
+                    for password in passwords:
+                        password = password.strip()
+                        password_count += 1
+
+                        if decrypt_file(input_path, output_file, password):
+                            if validate_decryption(output_file):
+                                print(f"[ {GREEN}+{RESET} ] decrypted successfully with password: {password}")
+                                print(f"Total attempts: {password_count}")
+                                with open("password.txt", "a") as pw_file:
+                                    pw_file.write(f"Password to {input_path} is: {password}\n")
+                                os.system(f"open {output_file}")
+                                return
+                            else:
+                                print(f"[ {RED}-{RESET} ] Incorrect password: {password}")
+                                if os.path.exists(output_file):
+                                    os.remove(output_file)
+                        else:
+                            print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
+
+                print(f"Decryption failed. No valid password found in {password_file}")
+
+            except FileNotFoundError:
+                print(f"Password file {password_file} not found.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        # Main entry point of the program
+        if __name__ == "__main__":
+            if len(sys.argv) == 2:
+                if sys.argv[1] == "--manual":
+                    main_manual()
+                elif sys.argv[1] == "--auto":
+                    main_auto()
+                elif sys.argv[1] == "--help":
+                    print("Usage: python decrypt.py [--manual] [--auto] [--help]")
+                    print("--manual: Decrypts the file with the given password.")
+                    print("--auto: Decrypts all .enc files in the specified directory.")
+                    print("--help: Displays this help message.")
+            else:
+                print("Invalid arguments. Use --help for usage instructions.")
 
 except KeyboardInterrupt:
     print("\nProgram interrupted.")
