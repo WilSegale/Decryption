@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import time
 import os
 from pathlib import Path
 
@@ -71,6 +72,7 @@ try:
                             if os.path.exists(output_file):
                                 os.remove(output_file)
                     else:
+                        time.sleep(1)
                         print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
 
             print(f"Decryption failed. No valid password found in {password_file}")
@@ -79,7 +81,7 @@ try:
             print(f"Password file {password_file} not found.")
         except Exception as e:
             print(f"An error occurred: {e}")
-
+    #auto mode
     # Function for automatic decryption mode (for multiple files)
     def main_auto():
         global password_count
