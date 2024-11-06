@@ -3,11 +3,14 @@ import sys
 import os
 from pathlib import Path
 
-# Path expansion for directory: Expanding the tilde '~' to the full path of the user's Desktop/decrypt directory
-directory = Path(os.path.expanduser('~/Desktop/decrypt'))
+# Get the directory of the current script
+script_directory = os.path.dirname(__file__)
 
-# List all .enc files in the directory: Fetching all files with the '.enc' extension in the specified directory
-files = list(directory.glob('*.enc'))
+# Get the filename of the current script
+script_filename = os.path.basename(__file__)
+
+# Path expansion for directory: Expanding the tilde '~' to the full path of the user's Desktop/decrypt directory
+files = list(Path(script_directory).glob('*.enc'))  # Correct usage of glob with Path
 
 # Color codes for terminal output: Defining color codes for terminal formatting (green, red, reset)
 GREEN = "\033[92m"
@@ -91,36 +94,39 @@ def main_auto():
     password_count = 0  # Initialize password counter outside the loop
 
     try:
-        # Opening the password file and iterating over each encrypted file
+        # Opening the password file once before the loop
         with open(password_file, "r") as f:
-            for input_file in files:
-                input_path = str(input_file)  # Convert Path object to string
-                print(f"Attempting to decrypt {input_path}...")
+            passwords = f.readlines()  # Read all passwords into a list
 
-                # Iterate over each password in the password file
-                for password in f:
-                    password = password.strip()  # Remove extra whitespace
-                    password_count += 1  # Increment for each password attempt
+        # Iterate over each encrypted file
+        for input_file in files:
+            input_path = str(input_file)  # Convert Path object to string
+            print(f"Attempting to decrypt {input_path}...")
 
-                    # Attempt decryption with the current password
-                    if decrypt_file(input_path, output_file, password):
-                        # Validate the decrypted file
-                        if validate_decryption(output_file):
-                            # If successful, print success message and save the password
-                            print(f"[ {GREEN}+{RESET} ] File {input_path} decrypted successfully with password: {password}")
-                            print(f"Total attempts: {password_count}")
-                            with open("password.txt", "a") as pw_file:
-                                pw_file.write(f"Password to {input_path} is: {password}\n")
-                            os.system(f"open {output_file}")  # Open the decrypted file (macOS command)
-                            return
-                        else:
-                            # If the decryption is invalid, print error and delete the output file
-                            print(f"[ {RED}={RESET} ] Incorrect password: {password}")
-                            if os.path.exists(output_file):
-                                os.remove(output_file)
+            # Iterate over each password
+            for password in passwords:
+                password = password.strip()  # Remove extra whitespace
+                password_count += 1  # Increment for each password attempt
+
+                # Attempt decryption with the current password
+                if decrypt_file(input_path, output_file, password):
+                    # Validate the decrypted file
+                    if validate_decryption(output_file):
+                        # If successful, print success message and save the password
+                        print(f"[ {GREEN}+{RESET} ] decrypted successfully with password: {password}")
+                        print(f"Total attempts: {password_count}")
+                        with open("password.txt", "a") as pw_file:
+                            pw_file.write(f"Password to {input_path} is: {password}\n")
+                        os.system(f"open {output_file}")  # Open the decrypted file (macOS command)
+                        return
                     else:
-                        # If decryption fails, print error message
-                        print(f"[ {RED}-{RESET} ] Failed to decrypt {input_path} with password: {password}")
+                        # If the decryption is invalid, print error and delete the output file
+                        print(f"[ {RED}={RESET} ] Incorrect password: {password}")
+                        if os.path.exists(output_file):
+                            os.remove(output_file)
+                else:
+                    # If decryption fails, print error message
+                    print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
 
         print(f"Decryption failed. No valid password found in {password_file}")
 
@@ -137,7 +143,7 @@ if __name__ == "__main__":
         elif sys.argv[1] == "--auto":  # If automatic mode is selected
             main_auto()
         elif sys.argv[1] == "--help":  # If help mode is selected
-            print("Usage: python decrypt.py [--manual] [--help]")
+            print("Usage: python decrypt.py [--manual] [--auto] [--help]")
             print("--manual: Decrypts the file with the given password.")
             print("--auto: Decrypts all .enc files in the specified directory.")
             print("--help: Displays this help message.")
