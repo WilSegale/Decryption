@@ -1,7 +1,7 @@
 import subprocess
 import getpass
 import os
-os.system("ls")
+
 def encrypt_file(input_file, output_file, password):
     """Encrypts a file using openssl with aes-256-cbc."""
     command = [
@@ -9,8 +9,13 @@ def encrypt_file(input_file, output_file, password):
         "-in", input_file, "-out", output_file,
         "-pass", f"pass:{password}"
     ]
-    subprocess.run(command, check=True)
-    print(f"File encrypted to {output_file}")
+    try:
+        subprocess.run(command, check=True)
+        print(f"File encrypted to {output_file}")
+    except subprocess.CalledProcessError as e:
+        print(f"Encryption failed: {e}")
+        return False
+    return True
 
 def main():
     # Get user input
@@ -20,7 +25,9 @@ def main():
     password = getpass.getpass("Input Password: ")
 
     # Encrypt the file
-    encrypt_file(input_file, output_file, password)
+    if encrypt_file(input_file, output_file, password):
+        os.remove(input_file)
+        print(f"Original file {input_file} has been removed.")
 
 if __name__ == "__main__":
     main()

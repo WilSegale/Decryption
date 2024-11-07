@@ -3,9 +3,9 @@ import sys
 import time
 import os
 from pathlib import Path
-
+start_time = time.time()
 try:
-    start_time = time.time()
+    
 
     # Get the directory of the current script
     script_directory = os.path.dirname(__file__)
@@ -64,6 +64,7 @@ try:
                     for password in f:
                         password = password.strip()
                         password_count += 1  # Increment for each password attempt
+                        total_time = time.time() - start_time
 
                         if decrypt_file(input_file, output_file, password):
                             if validate_decryption(output_file):
@@ -71,6 +72,8 @@ try:
                                 print(f"Total attempts: {password_count}")
                                 with open("password.txt", "a") as pw_file:
                                     pw_file.write(f"Password to {input_file} is: {password}\n")
+                                    print(f"Total time elapsed: {total_time:.2f} seconds")
+
                                 os.system(f"open {output_file}")
                                 return
                             else:
@@ -105,10 +108,13 @@ try:
                 for password in passwords:
                     password = password.strip()
                     password_count += 1
+                    total_time = time.time() - start_time
 
                     if decrypt_file(input_path, output_file, password):
                         if validate_decryption(output_file):
                             print(f"[ {GREEN}+{RESET} ] decrypted successfully with password: {password}")
+                            print(f"Total time elapsed: {total_time:.2f} seconds")
+
                             print(f"Total attempts: {password_count}")
                             with open("password.txt", "a") as pw_file:
                                 pw_file.write(f"Password to {input_path} is: {password}\n")
@@ -146,7 +152,6 @@ try:
 
 except KeyboardInterrupt:
 
-    total_time = time.time() - start_time
     print("\nProgram interrupted.")
     print(f"Total password attempts before interruption: {password_count}")
     print(f"Total time elapsed: {total_time:.2f} seconds")
