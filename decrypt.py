@@ -151,7 +151,7 @@ try:
             print("Invalid arguments. Use --help for usage instructions.")
 
 except KeyboardInterrupt:
-
+    total_time = time.time() - start_time
     print("\nProgram interrupted.")
     print(f"Total password attempts before interruption: {password_count}")
     print(f"Total time elapsed: {total_time:.2f} seconds")
