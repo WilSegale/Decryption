@@ -152,6 +152,8 @@ try:
 
 except KeyboardInterrupt:
     total_time = time.time() - start_time
+    minutes, seconds = divmod(total_time, 60)  # Get minutes and remaining seconds
+    
     print("\nProgram interrupted.")
     print(f"Total password attempts before interruption: {password_count}")
-    print(f"Total time elapsed: {total_time:.2f} seconds")
+    print(f"Total time elapsed: {int(minutes)} minute(s) and {seconds} second(s)")
