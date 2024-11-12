@@ -1,7 +1,7 @@
 import subprocess
 import getpass
 import os
-
+os.system("ls")
 def encrypt_file(input_file, output_file, password):
     """Encrypts a file using openssl with aes-256-cbc."""
     command = [
