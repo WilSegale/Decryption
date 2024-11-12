@@ -3,10 +3,10 @@ import sys
 import time
 import os
 from pathlib import Path
-start_time = time.time()
-try:
-    
 
+start_time = time.time()
+
+try:
     # Get the directory of the current script
     script_directory = os.path.dirname(__file__)
 
@@ -20,6 +20,10 @@ try:
 
     # Initialize the counter to track total password attempts
     password_count = 0
+
+    # Function to format a number to two decimal places
+    def show_two_decimals(number):
+        return "{:.2f}".format(number)
 
     # Function to attempt decryption using OpenSSL
     def decrypt_file(input_file, output_file, password):
@@ -65,6 +69,7 @@ try:
                         password = password.strip()
                         password_count += 1  # Increment for each password attempt
                         total_time = time.time() - start_time
+                        formatted_time = show_two_decimals(total_time)  # Format elapsed time
 
                         if decrypt_file(input_file, output_file, password):
                             if validate_decryption(output_file):
@@ -72,7 +77,7 @@ try:
                                 print(f"Total attempts: {password_count}")
                                 with open("password.txt", "a") as pw_file:
                                     pw_file.write(f"Password to {input_file} is: {password}\n")
-                                    print(f"Total time elapsed: {total_time:.2f} seconds")
+                                    print(f"Total time elapsed: {formatted_time} seconds")
 
                                 os.system(f"open {output_file}")
                                 return
@@ -84,13 +89,13 @@ try:
                             print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
 
                 print(f"Decryption failed. No valid password found in {password_file}")
-                print("Or now file with the ending of '.enc' found.")
+                print("Or no file with the ending of '.enc' found.")
 
             except FileNotFoundError:
                 print(f"Password file {password_file} not found.")
             except Exception as e:
                 print(f"An error occurred: {e}")
-        #auto mode
+
     # Function for automatic decryption mode (for multiple files)
     def main_auto():
         global password_count
@@ -109,11 +114,12 @@ try:
                     password = password.strip()
                     password_count += 1
                     total_time = time.time() - start_time
+                    formatted_time = show_two_decimals(total_time)  # Format elapsed time
 
                     if decrypt_file(input_path, output_file, password):
                         if validate_decryption(output_file):
-                            print(f"[ {GREEN}+{RESET} ] decrypted successfully with password: {password}")
-                            print(f"Total time elapsed: {total_time:.2f} seconds")
+                            print(f"[ {GREEN}+{RESET} ] Decrypted successfully with password: {password}")
+                            print(f"Total time elapsed: {formatted_time} seconds")
 
                             print(f"Total attempts: {password_count}")
                             with open("password.txt", "a") as pw_file:
@@ -128,7 +134,7 @@ try:
                         print(f"[ {RED}-{RESET} ] Failed to decrypt with password: {password}")
 
             print(f"\nDecryption failed. No valid password found in {password_file}")
-            print("Or now file with the ending of '.enc' found.")
+            print("Or no file with the ending of '.enc' found.")
 
         except FileNotFoundError:
             print(f"Password file {password_file} not found.")
@@ -153,7 +159,8 @@ try:
 except KeyboardInterrupt:
     total_time = time.time() - start_time
     minutes, seconds = divmod(total_time, 60)  # Get minutes and remaining seconds
+    formatted_seconds = show_two_decimals(seconds)  # Format seconds to two decimal places
     
     print("\nProgram interrupted.")
     print(f"Total password attempts before interruption: {password_count}")
-    print(f"Total time elapsed: {int(minutes)} minute(s) and {seconds} second(s)")
+    print(f"Total time elapsed: {int(minutes)} minute(s) and {formatted_seconds} second(s)")
